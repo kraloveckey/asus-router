@@ -1,0 +1,3 @@
+27 22 */7 * * service restart_letsencrypt #LetsEncrypt#
+*/5 * * * * /bin/sh /jffs/torrents.sh
+0 * * * *   /bin/sh /jffs/dot.sh
