@@ -3,8 +3,13 @@
 SERVICE="/jffs/tg.sh"
 SERVICE1="/jffs/smb.sh"
 IPTABLES_PATH=$(iptables -L -n -v | grep 14887 | wc -l)
+SMB_PATH=$(cat /etc/smb.conf | grep WHITE_IP | wc -l)
 
 if [ "${IPTABLES_PATH}" -eq "0" ] ; then
+   bash ${SERVICE1}
+fi
+
+if [ "${SMB_PATH}" -eq "0" ] ; then
    bash ${SERVICE1}
 fi
 

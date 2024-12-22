@@ -1,0 +1,32 @@
+#!/bin/sh
+
+TARGET_SCRIPT="/jffs/smb.sh"
+
+case "$1" in
+    "start")
+        NVRAM_SCRIPT="$(nvram get script_usbmount)"
+
+        if [ -n "$NVRAM_SCRIPT" ]; then
+            logger -t "$(basename "$0")" "Executing command in \"script_usbmount\" NVRAM variable: $NVRAM_SCRIPT"
+
+            eval "$NVRAM_SCRIPT"
+        else
+            if [ -x "$TARGET_SCRIPT" ]; then
+                /bin/sh "$TARGET_SCRIPT" start
+            fi
+        fi
+    ;;
+    "stop")
+        NVRAM_SCRIPT="$(nvram get script_usbumount)"
+
+        if [ -n "$NVRAM_SCRIPT" ]; then
+            logger -t "$(basename "$0")" "Executing command in \"script_usbumount\" NVRAM variable: $NVRAM_SCRIPT"
+
+            eval "$NVRAM_SCRIPT"
+        else
+            if [ -x "$TARGET_SCRIPT" ]; then
+                /bin/sh "$TARGET_SCRIPT" stop
+            fi
+        fi
+    ;;
+esac
