@@ -3,8 +3,6 @@ ASUS-Router
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/kraloveckey)
 
-[![Telegram Channel](https://img.shields.io/badge/Telegram%20Channel-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/cyber_notes)
-
 Replace the default Samba smb.conf file with a customized configuration file, then kill, restart the smbd daemon and add firewall rules. Designed to be run at boot time, on a router with an attached USB storage drive. There are also scripts available here:
 
 - to control the router via the telegram bot: [tg.sh](./jffs/tg.sh).
