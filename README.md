@@ -1,8 +1,6 @@
 ASUS-Router
 =============
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/kraloveckey)
-
 Replace the default Samba smb.conf file with a customized configuration file, then kill, restart the smbd daemon and add firewall rules. Designed to be run at boot time, on a router with an attached USB storage drive. There are also scripts available here:
 
 - to control the router via the telegram bot: [tg.sh](./jffs/tg.sh).
@@ -90,3 +88,9 @@ Simple and sweet.
 For our purposes, [`/jffs/smb.sh`](./jffs/smb.sh) contains the following line to copy a cron file from persistent storage into the folder watched by crond:
 
     cp /jffs/<admin user name> /var/spool/cron/crontabs
+
+---
+
+<a href="https://www.paypal.com/donate/?hosted_button_id=GWWLEXEF3XL92">
+  <img src="https://raw.githubusercontent.com/kraloveckey/kraloveckey/refs/heads/main/.assets/paypal-donate-button.png" alt="Donate with PayPal" width="225" height="100"/>
+</a>
