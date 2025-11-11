@@ -35,7 +35,11 @@ chmod 644 /jffs/smb.conf
 Setting up autostart for script
 =============
 
-Download **[asusware-usbmount.zip](./asusware-usbmount.zip)** then extract **asusware.arm** directory to the root of your USB storage device.
+This is my current workaround for ASUS routers that no longer execute commands in the `script_usbmount` NVRAM variable on USB mount.
+
+> Your router must have a USB port and support ASUS Download Master.
+
+Download **[asusware-usbmount.zip](./asusware-usbmount.zip)** then extract **asusware.arm** directory (or use files from [asusware.arm](asusware.arm/) directory) to the root of your USB storage device.
 
 > [!IMPORTANT]
 > If your router's architecture is not ARM you will have to replace it with the correct one in these files:
@@ -48,19 +52,26 @@ Download **[asusware-usbmount.zip](./asusware-usbmount.zip)** then extract **asu
 > Known supported architecture values are `arm, mipsbig, mipsel`.  
 > For `mipsel` the directory has to be called just **asusware**.
 
-> [!WARNING]
-> If you installed `scripts-startup.sh` script in a custom path (`/jffs/scripts-startup.sh` is the default) you will have to correct the value of `TARGET_SCRIPT` variable in `asusware.arm/etc/init.d/S50usb-mount-script` file!
+### Usage
+
+**The script is hardcoded to launch `/jffs/smb.sh` script after USB storage is mounted.**  
+You can modify `asusware.arm/etc/init.d/S50usb-mount-script` script to run your own logic.  
+You can also add more scripts to `asusware.arm/etc/init.d` directory if you wish.
 
 ### Sometimes this workaround does not work straight away - in that case do the following:
 
-- grab another USB stick (or reformat current one)
-- plug it into the router (it has to be the only one plugged in)
-- install Download Master
-- unplug it and plug back the "workaround" one - everything should be working now
-
-I'm yet to discover how to avoid this, perhaps it has something to do with `apps_` variables.
+- Delete old **asusware.arm** directory from the root of your USB storage device and reinstall `Download Master`.
+or:
+- Grab another USB stick (or reformat current one).
+- Plug it into the router (it has to be the only one plugged in).
+- Install Download Master.
+- "Safely remove disk" through the ASUS Web UI.
+- Unplug the USB stick and reboot the router.
+- Plug in the "workaround" stick – it should work now.
 
 ### This can reduce scripts startup delay:
+
+To reduce the delay before the script is triggered you can prevent the firmware from checking mounted filesystems for errors.
 
 ```
 nvram set stop_fsck=1
@@ -68,6 +79,10 @@ nvram commit
 ```
 
 _This prevents the firmware from checking device containing `asusware` directory for filesystem errors._
+
+> [!WARNING]
+> Do not do this if you're using the USB stick for other purposes like file share or **Entware**.  
+> Power failures will lead to filesystem corruption, without **fsck** running regularly it will eventually make the filesystem broken.
 
 Upon either rebooting, or disconnecting/reconnecting the USB drive, the script will execute, kill all existing smbd processes, copy the custom configuration file into place, restart smbd with the custom conf file and add firewall rules.
 
