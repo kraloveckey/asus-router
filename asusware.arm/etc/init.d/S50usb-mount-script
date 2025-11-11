@@ -1,32 +1,41 @@
 #!/bin/sh
+#
+# This script will be called when a USB drive is mounted.
+# Receiving unmount event here is unlikely.
+#
 
-TARGET_SCRIPT="/jffs/smb.sh"
+mount="$(df "$(readlink -f "$0")" | grep -v "^Filesystem" | head -n 1 | awk '{print $1, $6}')"
+device="$(echo "$mount" | awk '{print $1}')"
+mount="$(echo "$mount" | awk '{print $2}')"
 
 case "$1" in
     "start")
-        NVRAM_SCRIPT="$(nvram get script_usbmount)"
-
-        if [ -n "$NVRAM_SCRIPT" ]; then
-            logger -t "$(basename "$0")" "Executing command in \"script_usbmount\" NVRAM variable: $NVRAM_SCRIPT"
-
-            eval "$NVRAM_SCRIPT"
-        else
-            if [ -x "$TARGET_SCRIPT" ]; then
-                /bin/sh "$TARGET_SCRIPT" start
-            fi
+        if [ -x /jffs/smb.sh ]; then
+            logger -t "$(basename "$0")" "Executing /jffs/smb.sh"
+            /jffs/smb.sh "$device" "$mount" &
         fi
+
+        # This allows the USB drive to be unplugged and then plugged back in to retrigger this script again.
+        # Without this, router will not call this script again until a reboot and "USB Application" menu
+        # in the ASUS web GUI might also get stuck on "apps installing" status.
+        {
+            # Wait for the ASUS apps script to finish (/rom/.asusrouter)
+            timeout=15
+            while [ "$(nvram get apps_state_autorun)" != "4" ] && [ "$timeout" -ge 0 ]; do
+                sleep 1
+                timeout=$((timeout-1))
+            done
+
+            # Reset all apps_* variables, 'nvram commit' is not needed
+            for var in state_autorun state_install state_remove state_switch state_stop state_enable state_update state_upgrade state_cancel state_error state_action mounted_path dev; do
+                nvram set "apps_$var="
+            done
+        } > /dev/null 2>&1 &
     ;;
     "stop")
-        NVRAM_SCRIPT="$(nvram get script_usbumount)"
-
-        if [ -n "$NVRAM_SCRIPT" ]; then
-            logger -t "$(basename "$0")" "Executing command in \"script_usbumount\" NVRAM variable: $NVRAM_SCRIPT"
-
-            eval "$NVRAM_SCRIPT"
-        else
-            if [ -x "$TARGET_SCRIPT" ]; then
-                /bin/sh "$TARGET_SCRIPT" stop
-            fi
+        if [ -x /jffs/smb.sh ]; then
+            logger -t "$(basename "$0")" "Executing /jffs/smb.sh"
+            /jffs/smb.sh "$device" "$mount" &
         fi
     ;;
 esac
